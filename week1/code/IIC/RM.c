@@ -1,31 +1,8 @@
 #include "RM.h"
 
 
-int SCL = 0;
+int SCL = 1;
 int SDA = 0;
-
-
-
-
-static void SDA_High()
-{
-    SDA = 1;
-}
-
-static void SDA_Low()
-{
-    SDA = 0;
-}
-
-static void SCL_High()
-{
-    SCL = 1;
-}
-
-static void SCL_Low()
-{
-    SCL = 0;
-}
 
 
 /**
@@ -72,18 +49,24 @@ static void IIC_Stop()
     SDA_High();
 }
 
+
+
 /**
- * @brief 接收应答
- * 
+ * @brief 接收应答信号
+ * @return 0:ACK, 1:NACK
  */
-static void IIC_ReceiveAck()
+static int IIC_ReceiveAck(void)
 {
+    SCL_Low();
+    SDA_In();
     SDA_High();
     delay_ms();
     SCL_High();
     delay_ms();
+    int ack = SDA_Read() ? 1 : 0;
     SCL_Low();
-    delay_ms();
+    SDA_Out();
+    return ack;
 }
 
 /**
@@ -92,7 +75,7 @@ static void IIC_ReceiveAck()
  * @param dat 
  */
 static void Send_Byte(uint8_t dat)
-{
+{   
     for (int i = 0; i < 8; i++)
     {
         SCL_Low(); // 将时钟信号设置为低电平
@@ -117,27 +100,27 @@ static void Send_Byte(uint8_t dat)
  * 
  * @param data 
  */
-void Send_Data(uint8_t data)
+void Send_Data(uint8_t device_addr,uint8_t reg_addr,uint8_t data)
 {
     IIC_Start();
-    Send_Byte(DEVICE_ADDRESS);
-    IIC_ReceiveAck();
-    Send_Byte(DEVICE_DATA); // write data
-    IIC_ReceiveAck();
+    Send_Byte((device_addr << 1) | 0);
+    if (IIC_ReceiveAck())
+    {
+        IIC_Stop();
+        return;
+    }
+    Send_Byte(reg_addr);
+    if (IIC_ReceiveAck())
+    {
+        IIC_Stop();
+        return;
+    }
     Send_Byte(data);
-    IIC_ReceiveAck();
+    if (IIC_ReceiveAck())
+    {
+        IIC_Stop();
+        return;
+    }
     IIC_Stop();
 }
 
-
-void Send_Cmd(uint8_t cmd)
-{
-    IIC_Start();
-    Send_Byte(DEVICE_ADDRESS);
-    IIC_ReceiveAck();
-    Send_Byte(DEVICE_CMD); // write command
-    IIC_ReceiveAck();
-    Send_Byte(cmd);
-    IIC_ReceiveAck();
-    IIC_Stop();
-}

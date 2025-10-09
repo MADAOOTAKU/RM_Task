@@ -2,6 +2,6 @@
 
 int main() 
 {
-    Send_Data(0x55);
+    Send_Data(DEVICE_ADDRESS, DEVICE_REG, DEVICE_DATA);
     return 0;
 }
