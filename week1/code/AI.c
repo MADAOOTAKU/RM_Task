@@ -2,6 +2,6 @@
 
 int main()
 {
-    printf("YES\n");
+    printf("NO\n");
     return 0;
 }
