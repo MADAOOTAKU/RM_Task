@@ -59,8 +59,7 @@ struct soft_timer {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern UART_HandleTypeDef huart1;
-extern I2C_HandleTypeDef hi2c1;
+
 
 
 int target_num=333;//1s
@@ -73,13 +72,6 @@ struct soft_timer key_timer = {~0, NULL, key_timeout_func};
 static uint8_t g_data_buf[100];
 static circle_buf g_key_bufs;
 
-void Wait_Tx_Complete(void);
-void Wait_Rx_Complete(void);
-void StartUART1Recv(void);
-int UART1GetChar(uint8_t *pVal);
-
-void Wait_I2C1Tx_Complete(void);
-void Wait_I2C1Rx_Complete(void);
 
 
 void key_timeout_func(void *args)
@@ -111,7 +103,7 @@ void check_timer(void)
 	}
 }
 
-uint8_t mode;
+uint8_t mode;//模式状态机
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -147,22 +139,14 @@ void SystemClock_Config(void);
 
 /* USER CODE END 0 */
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int num;
+//计时
+int num=0;
 
 
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	int len;
-	char *str = "www.100ask.net";
-	char *str2 = "Please enter a char: \r\n";
-	char c;
-	char flash_buf[20];
-	
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -198,21 +182,10 @@ int main(void)
 	
 	ColorLED_Init();
 	
-	uint32_t color = 0;
-
-//	ColorLED_SetColor(0x00ff0000);
-//	mdelay(1000);
-//	ColorLED_SetColor(0x00ff00);
-//	mdelay(1000);
-//	ColorLED_SetColor(0x00ff);
-//	mdelay(1000);
-
 
 	while (1)
-    {
-//		ColorLED_SetColor(color);
-//		color += 20;
-//		mdelay(1000);
+{
+
 	  OLED_PrintSignedVal(0,0,num);
 		
 	  if(num<mode*target_num)
@@ -222,7 +195,6 @@ int main(void)
 	  else if(num<2*mode*target_num)
 	  {
 		  ColorLED_SetColor(0x00ff);
-//		  num=0;
 	  }
 	  else
 		  num=0;

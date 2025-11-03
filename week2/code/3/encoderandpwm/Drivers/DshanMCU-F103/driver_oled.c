@@ -145,22 +145,6 @@ static int OLED_WriteCmd(uint8_t cmd)
     return HAL_I2C_Master_Transmit(g_pHI2COLED, OELD_I2C_ADDR, tmpbuf, 2, OLED_TIMEOUT);
 }
 
-/*
- *  函数名：OLED_WriteData
- *  功能描述：I2C发送命令给OLED
- *  输入参数：data-发送给OLED的写入GDRAM的数据
- *  输出参数：无
- *  返回值：0-成功, 其他值失败
- */
-static int OLED_WriteData(uint8_t data)
-{
-    uint8_t tmpbuf[2];
-
-    tmpbuf[0] = 0x40;
-    tmpbuf[1] = data;
-    
-    return HAL_I2C_Master_Transmit(g_pHI2COLED, OELD_I2C_ADDR, tmpbuf, 2, OLED_TIMEOUT);
-}
 
 /*
  *  函数名：OLED_WriteNBytes
@@ -189,68 +173,9 @@ static void OLED_SetContrastValue(uint8_t value)
     OLED_WriteCmd(value);
 }
 
-/************** 2. 滚动命令功能函数 **************/
-/*
- *  函数名：OLED_H_Scroll
- *  功能描述：让指定页的像素朝着设置的方向按设置的频率水平滚动
- *  输入参数：dir--->滚动方向：朝左或者朝右
- *            start--->起始页
- *            fr_time--->滚动间隔时间，每隔这么多帧水平偏移一列滚动
- *            end--->结束页
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_H_Scroll(H_SCROLL_DIR dir, uint8_t start, uint8_t fr_time, uint8_t end)
-{
-    if((dir != H_RIGHT) && (dir != H_LEFT))     return;
-    if((start>0x07) || (fr_time>0x07) || (end>0x07))    return;
-    OLED_WriteCmd(dir);
-    OLED_WriteCmd(0x00);
-    OLED_WriteCmd(start);
-    OLED_WriteCmd(fr_time);
-    OLED_WriteCmd(end);
-    OLED_WriteCmd(0x00);
-    OLED_WriteCmd(0xFF);
-}
 
-/*
- *  函数名：OLED_HV_Scroll
- *  功能描述：让指定页的像素朝着设置的方向按设置的频率水平滚动且会将像素的行地址进行偏移offset这么多个单位
- *  输入参数：dir--->滚动方向：朝左或者朝右
- *            start--->起始页
- *            fr_time--->滚动间隔时间，每隔这么多帧水平偏移一列滚动
- *            end--->结束页
- *            offset--->行偏移单位
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_HV_Scroll(HV_SCROLL_DIR dir, uint8_t start, uint8_t fr_time, uint8_t end, uint8_t offset)
-{
-    if((dir != HV_RIGHT) && (dir != HV_LEFT))     return;
-    if((start>0x07) || (fr_time>0x07) || (end>0x07) || (offset>0x3F))    return;
-    OLED_WriteCmd(dir);
-    OLED_WriteCmd(0x00);
-    OLED_WriteCmd(start);
-    OLED_WriteCmd(fr_time);
-    OLED_WriteCmd(end);
-    OLED_WriteCmd(offset);
-}
 
-/*
- *  函数名：OLED_SetVScrollArea
- *  功能描述：设置OLED像素垂直滚动的区域
- *  输入参数：area-->顶行区域
- *            row_num--->滚动的行区域
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_SetVScrollArea(uint8_t area, uint8_t row_num)
-{
-    if((area>0x3F) || (row_num>0x7F))       return;
-    OLED_WriteCmd(0xA3);
-    OLED_WriteCmd(area);
-    OLED_WriteCmd(row_num);
-}
+
 
 /************** 3. 地址设置功能函数 **************/
 static MEM_MODE mem_mode = PAGE_ADDR_MODE;  // 静态局部变量，保存OLED的地址模式的
@@ -285,39 +210,8 @@ static void OLED_SetMemAddrMode(MEM_MODE mode)
     mem_mode = mode;
 }
 
-/*
- *  函数名：OLED_SetColAddr_HV
- *  功能描述：设置OLED在水平地址模式或垂直地址模式下像素显示的起始行地址和结束行地址
- *  输入参数：start-->起始行地址
- *            end --->结束行地址
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_SetColAddr_HV(uint8_t start, uint8_t end)
-{
-    if(mem_mode == PAGE_ADDR_MODE)      return;
-    if((start > 127) || (end > 127))    return;
-    OLED_WriteCmd(0x21);
-    OLED_WriteCmd(start);
-    OLED_WriteCmd(end);
-}
 
-/*
- *  函数名：OLED_SetPageAddr_HV
- *  功能描述：设置OLED在水平地址模式或垂直地址模式下像素显示的起始页地址和结束页地址
- *  输入参数：start-->起始页地址
- *            end --->结束页地址
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_SetPageAddr_HV(uint8_t start, uint8_t end)
-{
-    if(mem_mode == PAGE_ADDR_MODE)      return;
-    if((start > 7) || (end > 7))        return; 
-    OLED_WriteCmd(0x22);
-    OLED_WriteCmd(start);
-    OLED_WriteCmd(end);
-}
+
 
 /*
  *  函数名：OLED_SetPageAddr_PAGE
@@ -408,34 +302,7 @@ static void OLED_SetDCLK_Freq(uint8_t div, uint8_t freq)
     OLED_WriteCmd(div + (freq<<4));
 }
 
-/*
- *  函数名：OLED_SetPreChargePeriod
- *  功能描述：设置OLED的预充电周期
- *  输入参数：phase1-->预充电阶段1时间
- *            phase2-->预充电阶段2时间
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_SetPreChargePeriod(uint8_t phase1, uint8_t phase2)
-{
-    if((phase1>0x0F) || (phase2>0x0F))       return;
-    OLED_WriteCmd(0xD9);
-    OLED_WriteCmd(phase1 + (phase2<<4));    
-}
 
-/*
- *  函数名：OLED_SetVcomhLevel
- *  功能描述：设置OLED的电压等级
- *  输入参数：level-->电压等级
- *  输出参数：无
- *  返回值：无
-*/
-static void OLED_SetVcomhLevel(VCOMH_LEVEL level)
-{
-    if((level != LEVEL_0) && (level != LEVEL_1) && (level != LEVEL_2))      return;
-    OLED_WriteCmd(0xDB);
-    OLED_WriteCmd(level);
-}
 
 /************** 6. 电荷碰撞功能函数 **************/
 /*

@@ -291,137 +291,74 @@ void Motor_SetSpeed(int32_t channel, int32_t speed)
 }
 
 
-/**********************************************************************
- * 函数名称： Motor_Test
- * 功能描述： Motor测试程序
- * 输入参数： 无
- * 输出参数： 无
- *            无
- * 返 回 值： 0 - 成功, 其他值 - 失败
- * 修改日期        版本号     修改人        修改内容
- * -----------------------------------------------
- * 2023/08/03        V1.0     韦东山       创建
- ***********************************************************************/
+/**
+ * @brief RM任务4-速度环
+ * 
+ */
 void Motor_Test(void)
 {
 
-    int i, len;
-    
-    Motor_Init(MOTOR_A);
-    Motor_Init(MOTOR_B);
+    //测速变量
+    int a = 0;
+    int lasta;
 
-	int a,b;
-	int lasta;
-	int key;
+    int len = 0;
+    int key=0;
 	int mode=1;
-	int outspeed;
-	float err;
-	
-    while (1)
-    {
-//        LCD_PrintString(0, 0, "Motor Test: ");
-		mdelay(50);
-		
-		key=Key_Read();
-		
-		if(key==1)
-		{			
-			while(Key_Read());
-			mode++;
-			if(mode>3)
-			{
-				mode=1;
-			}
-		}
+	int outspeed=0;
+	float err=0;
 
-		RotaryEncoder_Read(&a,&nowencoder,&b);
-		
-		speed=a-lasta;
-		lasta=a;
-		
-		speed=speed*20.0/270.0;//转每秒
-		
-		len +=LCD_PrintSignedVal(0,0,speed);
-		LCD_ClearLine(len, 0);
-
-		len +=LCD_PrintSignedVal(0,2,a);
-		LCD_ClearLine(len, 2);
-								
-		
-		if(mode==1)
-		{
-			err=1.0-speed;
-
-		}
-		else if(mode==2)
-		{
-			err=2.0-speed;
-
-		}
-		else if(mode==3)
-		{
-			err=3.0-speed;
-
-		}
-
-		outspeed=pid(err,5,0.5,2.2);	
-		
-		Motor_SetSpeed(MOTOR_B, -outspeed);
-		
-	
-
-
-
-
-
-		
-//		LCD_ClearLine(len, 2);
-//        speed = 0;
-		
-//		Motor_SetSpeed(MOTOR_B, 90);
-//        for (i = 0; i < 10; i++)
-//        {
-//            len = LCD_PrintString(0, 2, "Speed:");
-//            len += LCD_PrintSignedVal(len, 2, speed);
-//            LCD_ClearLine(len, 2);
-
-//            Motor_SetSpeed(MOTOR_A, speed);
-//            Motor_SetSpeed(MOTOR_B, speed);
-//            speed += 10;
-//            mdelay(1000);
-//        }
-		
-        /* 停止 */
-//        speed = 0;
-//        Motor_SetSpeed(MOTOR_A, speed);
-//        Motor_SetSpeed(MOTOR_B, speed);
-//        len = LCD_PrintString(0, 2, "Speed:");
-//        len += LCD_PrintSignedVal(len, 2, speed);
-//        LCD_ClearLine(len, 2);
-//        mdelay(2000);
-
-        /* 反转 */
-//        for (i = 0; i < 10; i++)
-//        {
-//            len = LCD_PrintString(0, 2, "Speed:");
-//            len += LCD_PrintSignedVal(len, 2, speed);
-//            LCD_ClearLine(len, 2);
-
-//            Motor_SetSpeed(MOTOR_A, speed);
-//            Motor_SetSpeed(MOTOR_B, speed);
-//			LCD_PrintSignedVal(0,0,nowencoder);
-//            speed -= 10;
-//            mdelay(1000);
-//        }
-
-        /* 停止 */
-//        speed = 0;
-//        Motor_SetSpeed(MOTOR_A, speed);
-//        Motor_SetSpeed(MOTOR_B, speed);
-//        len = LCD_PrintString(0, 2, "Speed:");
-//        len += LCD_PrintSignedVal(len, 2, speed);
-//        LCD_ClearLine(len, 2);
-//        mdelay(2000);		
+    mdelay(50);//每50ms执行一次
+    
+    key=Key_Read();
+    
+    if(key==1)
+    {			
+        while(Key_Read());
+        mode++;
+        if(mode>3)
+        {
+            mode=1;
+        }
     }
+
+    RotaryEncoder_Read(&a);
+    
+    //speed即为编码器量的增量——单位为count的"速度"
+    speed=a-lasta;
+    lasta=a;
+    
+    speed=speed*20.0/270.0;//转每秒
+    //20.0因为上面延时50ms，所以1秒执行20次
+    //270是编码器的每转脉冲数，问客服得到的
+
+    len +=LCD_PrintSignedVal(0,0,speed);
+    LCD_ClearLine(len, 0);
+
+    len +=LCD_PrintSignedVal(0,2,a);
+    LCD_ClearLine(len, 2);
+                            
+    
+    if(mode==1)
+    {
+        err=1.0-speed;
+
+    }
+    else if(mode==2)
+    {
+        err=2.0-speed;
+
+    }
+    else if(mode==3)
+    {
+        err=3.0-speed;
+
+    }
+
+    outspeed=pid(err,5,0.5,2.2);	
+    
+    Motor_SetSpeed(MOTOR_B, -outspeed);//编码器方向和电机运动方向相反
+    //即，电机往前走，编码器计数值为负，所以这里要给负的速度，这才是期望的向前速度
+    //不然的话，编码器参与的每一次反馈都变成”负反馈“都变成正反馈，电机就会疯转
 }
 

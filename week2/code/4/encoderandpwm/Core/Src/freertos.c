@@ -132,44 +132,22 @@ void MX_FREERTOS_Init(void) {
 
 
 /**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
+ * @brief RM任务4主线程
+ * 
+ * @param argument 
+ */
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   LCD_Init();
   LCD_Clear();
-  RotaryEncoder_Init();
-  Key_Init();
+  RotaryEncoder_Init();//编码器初始化
+  Key_Init();//按键初始化
+  Motor_Init(MOTOR_B);//电机初始化
   for(;;)
   {
-    //Led_Test();
-    //LCD_Test();
-	//MPU6050_Test(); +
-//	DS18B20_Test();
-	//DHT11_Test();
-	//ActiveBuzzer_Test();
-	//PassiveBuzzer_Test();
-	//ColorLED_Test();
-	//IRReceiver_Test();
-	//IRSender_Test();
-	//LightSensor_Test();
-	//IRObstacle_Test();
-	//SR04_Test();
-	//W25Q64_Test();
-	//RotaryEncoder_Test();
-	  Motor_Test();
-//	  int nowspeed,tagertspeed;//当前速度
-//int nowencoder;
-
-	  
-	  
-	//Key_Test();
-	//UART_Test();
+    Motor_Test();
   }
   /* USER CODE END StartDefaultTask */
 }

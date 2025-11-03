@@ -122,6 +122,8 @@ int main(void)
     /* USER CODE END WHILE */
 	
     /* USER CODE BEGIN 3 */
+    //程序在freeRTOS.c里，查看相应的任务，main.c里的死循环被废弃不用
+
   }
   /* USER CODE END 3 */
 }

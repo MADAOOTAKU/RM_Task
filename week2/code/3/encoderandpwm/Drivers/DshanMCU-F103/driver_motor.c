@@ -38,10 +38,9 @@
 #include "driver_key.h"
 
 int nowspeed,tagertspeed;//当前速度
-int nowencoder;
+int nowencoder=0;
 int32_t speed = 0;
 
-extern int32_t speed;
 
 #define MOTOR_A_IN1_GPIO_GROUP GPIOA
 #define MOTOR_A_IN1_GPIO_PIN   GPIO_PIN_4
@@ -266,115 +265,59 @@ void Motor_SetSpeed(int32_t channel, int32_t speed)
 }
 
 
-/**********************************************************************
- * 函数名称： Motor_Test
- * 功能描述： Motor测试程序
- * 输入参数： 无
- * 输出参数： 无
- *            无
- * 返 回 值： 0 - 成功, 其他值 - 失败
- * 修改日期        版本号     修改人        修改内容
- * -----------------------------------------------
- * 2023/08/03        V1.0     韦东山       创建
- ***********************************************************************/
+/**
+ * @brief RM任务3的任务函数
+ * @note 其实这里才是真正意义上的主函数
+ * 
+ */
 void Motor_Test(void)
 {
 
-    int i, len;
-    
-    Motor_Init(MOTOR_A);
-    Motor_Init(MOTOR_B);
+    //这些都是调试变量
+    int len = 0;
+    int a = 0;
+    int b=0;
+    int lasta=0;
 
-	int a,b;
-	int lasta;
-	int key;
+    //按键状态变量
+	int key=0;
 	int mode=1;
 	
-    while (1)
+    key=Key_Read();
+    if(key==1)
     {
-//        LCD_PrintString(0, 0, "Motor Test: ");
-
-		key=Key_Read();
-		if(key==1)
-		{
-			mode++;
-			if(mode>3)
-			{
-				mode=1;
-			}
-		}
-        /* 正转 */
-		if(mode==1)
-		{
-			Motor_SetSpeed(MOTOR_B, 90);
-		}
-		else if(mode==2)
-		{
-			Motor_SetSpeed(MOTOR_B, 0);
-		}
-		else if(mode==3)
-		{
-			Motor_SetSpeed(MOTOR_B, -90);
-		}		
-		
-		RotaryEncoder_Read(&a,&nowencoder,&b);
-		
-		speed=a-lasta;
-		lasta=a;
-		
-		len +=LCD_PrintSignedVal(0,0,speed);
-		LCD_ClearLine(len, 0);
-
-		len +=LCD_PrintSignedVal(0,2,a);
-		LCD_ClearLine(len, 2);
-		
-//		LCD_ClearLine(len, 2);
-//        speed = 0;
-		
-//		Motor_SetSpeed(MOTOR_B, 90);
-//        for (i = 0; i < 10; i++)
-//        {
-//            len = LCD_PrintString(0, 2, "Speed:");
-//            len += LCD_PrintSignedVal(len, 2, speed);
-//            LCD_ClearLine(len, 2);
-
-//            Motor_SetSpeed(MOTOR_A, speed);
-//            Motor_SetSpeed(MOTOR_B, speed);
-//            speed += 10;
-//            mdelay(1000);
-//        }
-		
-        /* 停止 */
-//        speed = 0;
-//        Motor_SetSpeed(MOTOR_A, speed);
-//        Motor_SetSpeed(MOTOR_B, speed);
-//        len = LCD_PrintString(0, 2, "Speed:");
-//        len += LCD_PrintSignedVal(len, 2, speed);
-//        LCD_ClearLine(len, 2);
-//        mdelay(2000);
-
-        /* 反转 */
-//        for (i = 0; i < 10; i++)
-//        {
-//            len = LCD_PrintString(0, 2, "Speed:");
-//            len += LCD_PrintSignedVal(len, 2, speed);
-//            LCD_ClearLine(len, 2);
-
-//            Motor_SetSpeed(MOTOR_A, speed);
-//            Motor_SetSpeed(MOTOR_B, speed);
-//			LCD_PrintSignedVal(0,0,nowencoder);
-//            speed -= 10;
-//            mdelay(1000);
-//        }
-
-        /* 停止 */
-//        speed = 0;
-//        Motor_SetSpeed(MOTOR_A, speed);
-//        Motor_SetSpeed(MOTOR_B, speed);
-//        len = LCD_PrintString(0, 2, "Speed:");
-//        len += LCD_PrintSignedVal(len, 2, speed);
-//        LCD_ClearLine(len, 2);
-//        mdelay(2000);		
+        mode++;
+        if(mode>3)
+        {
+            mode=1;
+        }
     }
+    /* 正转 */
+    if(mode==1)
+    {
+        Motor_SetSpeed(MOTOR_B, 90);
+    }
+    else if(mode==2)
+    {
+        Motor_SetSpeed(MOTOR_B, 0);
+    }
+    else if(mode==3)
+    {
+        Motor_SetSpeed(MOTOR_B, -90);
+    }		
+    
+    //以下部分用来显示电机的运动情况，实际并不是任务3的内容，只是方便我当时调试
+
+    RotaryEncoder_Read(&a,&nowencoder,&b);
+    
+    speed=a-lasta;
+    lasta=a;
+    
+    len +=LCD_PrintSignedVal(0,0,speed);
+    LCD_ClearLine(len, 0);
+
+    len +=LCD_PrintSignedVal(0,2,a);
+    LCD_ClearLine(len, 2);
+        
 }
 
