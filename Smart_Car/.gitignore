@@ -1,0 +1,46 @@
+# dot files
+/.vscode/launch.json
+/.settings
+/.eide/log
+/.eide.usr.ctx.json
+
+# project out
+/build
+/bin
+/obj
+/out
+Objects/
+Listings/
+
+# eide template
+*.ept
+*.eide-template
+
+# 编译输出文件
+*.o
+*.d
+*.axf
+*.bin
+*.hex
+*.map
+*.htm
+*.lnp
+*.bak
+*.tmp
+
+# Keil MDK 用户文件
+*.uvguix.*
+JLinkLog.txt
+
+# 临时文件
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 保护重要的配置文件 - 不要忽略
+!.vscode/settings.json
+!.eide/
+!scf/
+!ini/
