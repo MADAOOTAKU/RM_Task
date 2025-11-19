@@ -50,11 +50,20 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Huidu_CLK_GPIO_Port, Huidu_CLK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, Huidu_CLK_Pin|BIN1_Pin|BIN2_Pin|AIN2_Pin
+                          |AIN1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, BIN1_Pin|BIN2_Pin|AIN2_Pin|AIN1_Pin
-                          |OLED_SDA_Pin|OLED_SCL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, OLED_SDA_Pin|OLED_SCL_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : Huidu_CLK_Pin BIN1_Pin BIN2_Pin AIN2_Pin
+                           AIN1_Pin */
+  GPIO_InitStruct.Pin = Huidu_CLK_Pin|BIN1_Pin|BIN2_Pin|AIN2_Pin
+                          |AIN1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Huidu_DAT_Pin */
   GPIO_InitStruct.Pin = Huidu_DAT_Pin;
@@ -62,20 +71,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(Huidu_DAT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Huidu_CLK_Pin */
-  GPIO_InitStruct.Pin = Huidu_CLK_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Huidu_CLK_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : BIN1_Pin BIN2_Pin AIN2_Pin AIN1_Pin
-                           OLED_SDA_Pin OLED_SCL_Pin */
-  GPIO_InitStruct.Pin = BIN1_Pin|BIN2_Pin|AIN2_Pin|AIN1_Pin
-                          |OLED_SDA_Pin|OLED_SCL_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  /*Configure GPIO pins : OLED_SDA_Pin OLED_SCL_Pin */
+  GPIO_InitStruct.Pin = OLED_SDA_Pin|OLED_SCL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }

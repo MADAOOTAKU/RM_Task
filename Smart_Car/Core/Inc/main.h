@@ -57,10 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Huidu_DAT_Pin GPIO_PIN_2
-#define Huidu_DAT_GPIO_Port GPIOA
-#define Huidu_CLK_Pin GPIO_PIN_3
-#define Huidu_CLK_GPIO_Port GPIOA
+#define Huidu_CLK_Pin GPIO_PIN_10
+#define Huidu_CLK_GPIO_Port GPIOB
+#define Huidu_DAT_Pin GPIO_PIN_11
+#define Huidu_DAT_GPIO_Port GPIOB
 #define BIN1_Pin GPIO_PIN_12
 #define BIN1_GPIO_Port GPIOB
 #define BIN2_Pin GPIO_PIN_13

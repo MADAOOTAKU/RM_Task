@@ -57,6 +57,9 @@ virtualFolder:
         - path: ../BSP/motor.h
         - path: ../BSP/oled.c
         - path: ../BSP/oled.h
+        - path: ../BSP/oledfont.h
+        - path: ../BSP/huidu.c
+        - path: ../BSP/huidu.h
       folders: []
     - name: ::CMSIS
       files: []
@@ -77,6 +80,7 @@ targets:
         - ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
         - ../Drivers/CMSIS/Device/ST/STM32F1xx/Include
         - ../Drivers/CMSIS/Include
+        - ../BSP
         - .cmsis/include
         - RTE/_Smart_Car
       libList: []
@@ -99,7 +103,7 @@ targets:
             language-cpp: c++11
             link-time-optimization: false
             one-elf-section-per-function: true
-            optimization: level-0
+            optimization: level-1
             short-enums#wchar: true
             warnings: ac5-like-warnings
           global:
@@ -198,4 +202,14 @@ targets:
         otherCmds: ""
         proType: 1
         speed: 8000
-    uploader: JLink
+      STLink:
+        address: "0x8000000"
+        bin: ""
+        elFile: None
+        optionBytes: .eide/smart_car.st.option.bytes.ini
+        otherCmds: ""
+        proType: SWD
+        resetMode: default
+        runAfterProgram: true
+        speed: 4000
+    uploader: STLink

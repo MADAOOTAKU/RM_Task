@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../BSP</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -635,6 +635,21 @@
               <FileName>oled.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\BSP\oled.h</FilePath>
+            </File>
+            <File>
+              <FileName>oledfont.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\oledfont.h</FilePath>
+            </File>
+            <File>
+              <FileName>huidu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\huidu.c</FilePath>
+            </File>
+            <File>
+              <FileName>huidu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\huidu.h</FilePath>
             </File>
           </Files>
         </Group>

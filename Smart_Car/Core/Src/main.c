@@ -23,7 +23,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "oled.h"
+#include "motor.h"
+#include "encoder.h"
+#include "huidu.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +59,9 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t buffer[30];
+uint8_t Huidu_Datas = 0;
+int basic_speed = 20;
 /* USER CODE END 0 */
 
 /**
@@ -88,10 +94,21 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  
+  OLED_Init();
+  OLED_Clear();
 
+  motor_init();
+  
+  encoder_init();
+
+  HAL_TIM_Base_Start_IT(&htim2);
+
+  //SET_MOTORS_SPEED(9999, 9999);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,6 +118,22 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    // sprintf(buffer,"l:%d,r:%d",motor1_speed,motor2_speed);
+    // sprintf(buffer, "%f", Huidu_Proc(gw_gray_serial_read()));
+
+    OLED_ShowNum(0, 0, Huidu_Sum, 2, 16, 1);
+    OLED_ShowNum(0,16, Huidu_Error, 2, 16, 1);
+    OLED_ShowNum(0, 32, motor1_speed, 4, 16, 1);
+    OLED_ShowNum(0, 48, motor2_speed, 4, 16, 1);
+
+    OLED_Refresh();
+    
+
+    //HAL_Delay(100);
+
+    //SET_MOTORS_SPEED(-5000, -5000);
+
   }
   /* USER CODE END 3 */
 }
@@ -145,6 +178,28 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  
+
+  Huidu_Datas = gw_gray_serial_read(); // 8位灰度数据
+  Huidu_Proc(Huidu_Datas);             // 根据8位灰度数据进行误差读取
+
+  float Target_chasu = pid_calculate(&pid_Turn, Huidu_Error, Huidu_Target) * (basic_speed) * 0.04;
+
+  float motor1_target_speed=basic_speed+Target_chasu;
+  float motor2_target_speed=basic_speed-Target_chasu;
+  
+  //无差速测试
+  // float motor1_target_speed = basic_speed;
+  // float motor2_target_speed = basic_speed;
+  MEASURE_MOTORS_SPEED();
+
+  SET_MOTORS_SPEED(pid_calculate(&pid_Motor1_Speed, motor1_speed, motor1_target_speed),
+                   pid_calculate(&pid_Motor2_Speed, motor2_speed, motor2_target_speed));
+
+
+}
 
 /* USER CODE END 4 */
 
