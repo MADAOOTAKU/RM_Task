@@ -31,8 +31,8 @@ void Motor1_Get_Speed(void)
     int32_t motor1_count = (int16_t)__HAL_TIM_GET_COUNTER(&htim4);
     __HAL_TIM_SET_COUNTER(&htim4,0);
 
-    motor1_speed = (motor1_count * PI * RR) / CC * 0.0875;
-    //motor1_speed = motor1_count;
+    //motor1_speed = (motor1_count * PI * RR) / CC * 0.0875;
+    motor1_speed = motor1_count;
 }
 
 /**
@@ -44,8 +44,8 @@ void Motor2_Get_Speed(void)
     int32_t motor2_count = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
     __HAL_TIM_SET_COUNTER(&htim3, 0);
 
-    motor2_speed = (motor2_count * PI * RR) / CC * 0.0875;
-    //motor2_speed = motor2_count;
+    //motor2_speed = (motor2_count * PI * RR) / CC * 0.0875;
+    motor2_speed = motor2_count;
 
 }
 

@@ -61,7 +61,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 uint8_t buffer[30];
 uint8_t Huidu_Datas = 0;
-int basic_speed = 20;
+int basic_speed = 2000;
 /* USER CODE END 0 */
 
 /**
@@ -108,7 +108,7 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim2);
 
-  //SET_MOTORS_SPEED(9999, 9999);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,20 +119,14 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    // sprintf(buffer,"l:%d,r:%d",motor1_speed,motor2_speed);
-    // sprintf(buffer, "%f", Huidu_Proc(gw_gray_serial_read()));
 
-    OLED_ShowNum(0, 0, Huidu_Sum, 2, 16, 1);
+
+    OLED_ShowNum(0, 0, Huidu_Datas, 2, 16, 1);
     OLED_ShowNum(0,16, Huidu_Error, 2, 16, 1);
     OLED_ShowNum(0, 32, motor1_speed, 4, 16, 1);
     OLED_ShowNum(0, 48, motor2_speed, 4, 16, 1);
 
     OLED_Refresh();
-    
-
-    //HAL_Delay(100);
-
-    //SET_MOTORS_SPEED(-5000, -5000);
 
   }
   /* USER CODE END 3 */
@@ -181,24 +175,30 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   
-
   Huidu_Datas = gw_gray_serial_read(); // 8位灰度数据
-  Huidu_Proc(Huidu_Datas);             // 根据8位灰度数据进行误差读取
 
-  float Target_chasu = pid_calculate(&pid_Turn, Huidu_Error, Huidu_Target) * (basic_speed) * 0.04;
+  if(Huidu_Datas==255)
+  {
+      Turn_PID_Flag = 1;
+  }
 
-  float motor1_target_speed=basic_speed+Target_chasu;
-  float motor2_target_speed=basic_speed-Target_chasu;
-  
-  //无差速测试
-  // float motor1_target_speed = basic_speed;
-  // float motor2_target_speed = basic_speed;
+  Huidu_Error = Huidu_Proc(Huidu_Datas); // 根据8位灰度数据进行误差读取
+
   MEASURE_MOTORS_SPEED();
 
-  SET_MOTORS_SPEED(pid_calculate(&pid_Motor1_Speed, motor1_speed, motor1_target_speed),
-                   pid_calculate(&pid_Motor2_Speed, motor2_speed, motor2_target_speed));
+  float out = pid_calculate(&pid_Turn, Huidu_Error, 0);
+  if(Turn_PID_Flag == 1)
+  {
+    SET_MOTORS_SPEED(Huidu_Error + out + basic_speed-1000, Huidu_Error - out + basic_speed+1000);
+    
+    Turn_PID_Flag = 0;
+  }
 
-
+  else
+  {
+    SET_MOTORS_SPEED(Huidu_Error + out + basic_speed, Huidu_Error - out + basic_speed);
+  }
+  
 }
 
 /* USER CODE END 4 */

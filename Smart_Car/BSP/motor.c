@@ -4,9 +4,7 @@ uint8_t MOTOR1_ENABLE_FLAG = 0; // 电机使能标志位
 uint8_t MOTOR2_ENABLE_FLAG = 0;
 
 uint8_t Turn_PID_Flag = 1;
-uint8_t Distance_PID_Flag = 0;
-uint8_t Gyro_PID_Flag = 0;
-uint8_t Angle_PID_Flag = 0;
+
 
 /*---------------------------------------------------------------------------------------------------*/
 /*---------------------------------------PID计算部分部分---------------------------------------------*/
@@ -42,9 +40,9 @@ pid_t pid_Motor2_Speed = {
 };
 // 转向环参数修改			60cm/s	6	40
 pid_t pid_Turn = {
-    .Kp = 3.2,
+    .Kp = 10.0,
     .Ki = 0,
-    .Kd = 17,
+    .Kd = 0,
     .Target = 0,
     .Measure = 0,
     {0, 0, 0},
