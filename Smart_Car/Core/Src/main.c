@@ -120,11 +120,10 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 
-
-    OLED_ShowNum(0, 0, Huidu_Datas, 2, 16, 1);
+    OLED_ShowNum(0, 0, Huidu_Datas, 3, 16, 1);
     OLED_ShowNum(0,16, Huidu_Error, 2, 16, 1);
-    OLED_ShowNum(0, 32, motor1_speed, 4, 16, 1);
-    OLED_ShowNum(0, 48, motor2_speed, 4, 16, 1);
+    OLED_ShowNum(0, 32, distance, 5, 16, 1);
+    //OLED_ShowNum(0, 48, motor2_speed, 4, 16, 1);
 
     OLED_Refresh();
 
@@ -175,21 +174,21 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   
-  Huidu_Datas = gw_gray_serial_read(); // 8位灰度数据
+  Huidu_Datas = gw_gray_serial_read();
 
   if(Huidu_Datas==255)
   {
       Turn_PID_Flag = 1;
   }
 
-  Huidu_Error = Huidu_Proc(Huidu_Datas); // 根据8位灰度数据进行误差读取
+  Huidu_Error = Huidu_Proc(Huidu_Datas); 
 
   MEASURE_MOTORS_SPEED();
 
   float out = pid_calculate(&pid_Turn, Huidu_Error, 0);
   if(Turn_PID_Flag == 1)
   {
-    SET_MOTORS_SPEED(Huidu_Error + out + basic_speed-1000, Huidu_Error - out + basic_speed+1000);
+    SET_MOTORS_SPEED(Huidu_Error + out + basic_speed+2000, Huidu_Error - out + basic_speed-2000);
     
     Turn_PID_Flag = 0;
   }
@@ -197,6 +196,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   else
   {
     SET_MOTORS_SPEED(Huidu_Error + out + basic_speed, Huidu_Error - out + basic_speed);
+  }
+
+  if(distance>26000)
+  {
+    MOTORS_DISABLE();
   }
   
 }

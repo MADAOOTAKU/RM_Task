@@ -42,7 +42,7 @@ pid_t pid_Motor2_Speed = {
 pid_t pid_Turn = {
     .Kp = 10.0,
     .Ki = 0,
-    .Kd = 0,
+    .Kd = 2,
     .Target = 0,
     .Measure = 0,
     {0, 0, 0},

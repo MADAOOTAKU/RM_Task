@@ -57,10 +57,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Huidu_CLK_Pin GPIO_PIN_10
-#define Huidu_CLK_GPIO_Port GPIOB
-#define Huidu_DAT_Pin GPIO_PIN_11
-#define Huidu_DAT_GPIO_Port GPIOB
+#define IN6_Pin GPIO_PIN_0
+#define IN6_GPIO_Port GPIOA
+#define IN7_Pin GPIO_PIN_1
+#define IN7_GPIO_Port GPIOA
+#define IN8_Pin GPIO_PIN_2
+#define IN8_GPIO_Port GPIOA
+#define IN1_Pin GPIO_PIN_10
+#define IN1_GPIO_Port GPIOB
+#define IN2_Pin GPIO_PIN_11
+#define IN2_GPIO_Port GPIOB
 #define BIN1_Pin GPIO_PIN_12
 #define BIN1_GPIO_Port GPIOB
 #define BIN2_Pin GPIO_PIN_13
@@ -69,10 +75,16 @@ void Error_Handler(void);
 #define AIN2_GPIO_Port GPIOB
 #define AIN1_Pin GPIO_PIN_15
 #define AIN1_GPIO_Port GPIOB
+#define IN5_Pin GPIO_PIN_12
+#define IN5_GPIO_Port GPIOA
 #define OLED_SDA_Pin GPIO_PIN_4
 #define OLED_SDA_GPIO_Port GPIOB
 #define OLED_SCL_Pin GPIO_PIN_5
 #define OLED_SCL_GPIO_Port GPIOB
+#define IN3_Pin GPIO_PIN_8
+#define IN3_GPIO_Port GPIOB
+#define IN4_Pin GPIO_PIN_9
+#define IN4_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

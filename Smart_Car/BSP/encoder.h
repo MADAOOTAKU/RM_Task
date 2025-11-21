@@ -18,5 +18,6 @@ void MEASURE_MOTORS_SPEED(void);
 
 extern volatile int32_t motor1_speed;
 extern volatile int32_t motor2_speed;
+extern volatile int32_t distance;
 
 #endif

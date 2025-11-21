@@ -6,7 +6,7 @@ volatile int32_t motor1_speed = 0;
 //右电机真实速度(mm/s)
 volatile int32_t motor2_speed = 0;
 
-
+volatile int32_t distance = 0;
 /**
  * @brief 编码器初始化
  * 
@@ -57,4 +57,5 @@ void MEASURE_MOTORS_SPEED(void)
 {
     Motor1_Get_Speed();
     Motor2_Get_Speed();
+    distance += (motor1_speed + motor2_speed) / 2;
 }
