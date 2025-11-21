@@ -40,9 +40,9 @@ pid_t pid_Motor2_Speed = {
 };
 // 转向环参数修改			60cm/s	6	40
 pid_t pid_Turn = {
-    .Kp = 20.0,
+    .Kp = 100.0,
     .Ki = 0,
-    .Kd = 4,
+    .Kd = 10,
     .Target = 0,
     .Measure = 0,
     {0, 0, 0},

@@ -61,7 +61,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 uint8_t Huidu_Datas = 0;
-int basic_speed = 5000;
+int basic_speed = 8000;
 /* USER CODE END 0 */
 
 /**
@@ -185,7 +185,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   MEASURE_MOTORS_SPEED();
 
-  float out = pid_calculate(&pid_Turn, Huidu_Error, 0);
+  
 
   if(distance>3000&&distance<5000)
   {
@@ -199,10 +199,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   else
   {
-    basic_speed = 5000;
+    basic_speed = 8000;
   }
 
+  if(basic_speed==2000)
+  {
+    pid_Turn.Kp = 10.0;
+    pid_Turn.Kd = 2.0;
+  }
 
+  if (basic_speed == 8000)
+  {
+    pid_Turn.Kp = 100.0;
+    pid_Turn.Kd = 10.0;
+  }
+
+  float out = pid_calculate(&pid_Turn, Huidu_Error, 0);
 
   if(Turn_PID_Flag == 1)
   {
